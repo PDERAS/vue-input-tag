@@ -53,11 +53,10 @@ Then you need to register it:
 ## Props
 | Name | Type | Default | Description |
 | ---:| --- | ---| --- |
-| tags | Array | [] | Tags to be render in the input |
+| value | Array | [] | Tags to be render in the input (v-model) |
 | placeholder | String | "" | Placeholder to be shown when no tags |
 | read-only | Boolean | false | Set input to readonly |
 | add-tag-on-blur | Boolean | false | Add tag on input blur |
 | limit | String or Number | -1 (none) | Set a limit for the amount of tags |
 | validate | String or Function or Object | "" | Apply certain validator for user input. Choose from `email`, `url`, `text`, `digits` or `isodate`. Or pass a `function` or a `RegExp` object for custom validation |
 | add-tag-on-keys | Array | [ 13 (return), 188 (comma), 9 (tab) ] | Keys that are going to add the new tag
-| allow-duplicates | Boolean | false | Allow duplicate tags
