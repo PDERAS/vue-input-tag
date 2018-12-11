@@ -53,23 +53,18 @@ export default {
       type: Number,
       default: -1
     },
-    allowDuplicates: {
-      type: Boolean,
-      default: false
-    }
   },
 
   data() {
     return {
       newTag: "",
-      innerTags: [...this.value],
       isInputActive: false
     };
   },
 
   computed: {
     isLimit: function() {
-      return this.limit > 0 && Number(this.limit) === this.innerTags.length;
+      return this.limit > 0 && Number(this.limit) === this.value.length;
     }
   },
 
@@ -92,26 +87,26 @@ export default {
 
     addNew(e) {
       const keyShouldAddTag = e
-        ? this.addTagOnKeys.indexOf(e.keyCode) !== -1
+        ? this.addTagOnKeys.includes(e.keyCode)
         : true;
 
       const typeIsNotBlur = e && e.type !== "blur";
 
       if (
-        (!keyShouldAddTag && (typeIsNotBlur || !this.addTagOnBlur)) ||
-        this.isLimit
+        (!keyShouldAddTag && (typeIsNotBlur || !this.addTagOnBlur))
+        || this.isLimit
       ) {
         return;
       }
 
       if (
         this.newTag &&
-        (this.allowDuplicates || this.innerTags.indexOf(this.newTag) === -1) &&
+        !this.value.includes(this.newTag) &&
         this.validateIfNeeded(this.newTag)
       ) {
-        this.innerTags.push(this.newTag);
+
+        this.tagChange([...this.value, this.newTag]);
         this.newTag = "";
-        this.tagChange();
 
         e && e.preventDefault();
       }
@@ -128,7 +123,7 @@ export default {
 
       if (
         typeof this.validate === "string" &&
-        Object.keys(validators).indexOf(this.validate) > -1
+        Object.keys(validators).includes(this.validate)
       ) {
         return validators[this.validate].test(tagValue);
       }
@@ -140,25 +135,24 @@ export default {
         return this.validate.test(tagValue);
       }
 
-      return true;
+      return false;
     },
 
-    remove(index) {
-      this.innerTags.splice(index, 1);
-      this.tagChange();
+    remove(tag) {
+      this.tagChange(this.value.filter(a => a !== tag));
     },
 
     removeLastTag() {
       if (this.newTag) {
         return;
       }
-      this.innerTags.pop();
-      this.tagChange();
+      if (this.value.length) {
+        return this.remove(this.value[this.value.length -1])
+      }
     },
 
-    tagChange() {
-      this.$emit("update:tags", this.innerTags);
-      this.$emit("input", this.innerTags);
+    tagChange(newVal = []) {
+      this.$emit("input", newVal);
     }
   }
 };
@@ -173,9 +167,9 @@ export default {
     }"
     class="vue-input-tag-wrapper"
   >
-    <span v-for="(tag, index) in innerTags" :key="index" class="input-tag">
+    <span v-for="tag in value" :key="tag" class="input-tag">
       <span>{{ tag }}</span>
-      <a v-if="!readOnly" @click.prevent.stop="remove(index)" class="remove"></a>
+      <a v-if="!readOnly" @click.prevent.stop="remove(tag)" class="remove"></a>
     </span>
     <input
       v-if                     = "!readOnly && !isLimit"
@@ -183,10 +177,10 @@ export default {
       :placeholder             = "placeholder"
       type                     = "text"
       v-model                  = "newTag"
-      v-on:keydown.delete.stop = "removeLastTag"
-      v-on:keydown             = "addNew"
-      v-on:blur                = "handleInputBlur"
-      v-on:focus               = "handleInputFocus"
+      @keydown.delete.stop     = "removeLastTag"
+      @keydown                 = "addNew"
+      @blur                    = "handleInputBlur"
+      @focus                   = "handleInputFocus"
       class                    = "new-tag"
     />
   </div>
