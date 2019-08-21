@@ -12,7 +12,13 @@
   "contributors": [
     "Reed Jones <reed.jones@pderas.com>"
   ],
-  "repository": "https://github.com/PDERAS/vue-input-tag",
+  "repository": {
+      "type": "git",
+      "url": "git@github.com:PDERAS/vue-input-tag.git"
+  },
+  "publishConfig": {
+      "registry": "https://npm.pkg.github.com/"
+  },
   "homepage": "https://matiastucci.github.io/vue-input-tag",
   "license": "MIT",
   "main": "./dist/vueInputTag.common.js",
@@ -49,9 +55,5 @@
     "babel-core": "7.0.0-bridge.0",
     "gh-pages": "^1.2.0",
     "vue-template-compiler": "^2.5.17"
-  },
-  "engines": {
-    "node": ">= 6.0.0",
-    "npm": ">= 4.0.0"
   }
 }
